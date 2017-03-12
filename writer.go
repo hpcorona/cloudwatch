@@ -123,39 +123,14 @@ func (w *Writer) flush(events []*cloudwatchlogs.InputLogEvent) error {
 	return nil
 }
 
-// buffer splits up b into individual log events and inserts them into the
-// buffer.
+// buffer send a message as one event. No split.
 func (w *Writer) buffer(b []byte) (int, error) {
-	r := bufio.NewReader(bytes.NewReader(b))
+	w.events.add(&cloudwatchlogs.InputLogEvent{
+		Message:   aws.String(string(b)),
+		Timestamp: aws.Int64(now().UnixNano() / 1000000),
+	})
 
-	var (
-		n   int
-		eof bool
-	)
-
-	for !eof {
-		b, err := r.ReadBytes('\n')
-		if err != nil {
-			if err == io.EOF {
-				eof = true
-			} else {
-				break
-			}
-		}
-
-		if len(b) == 0 {
-			continue
-		}
-
-		w.events.add(&cloudwatchlogs.InputLogEvent{
-			Message:   aws.String(string(b)),
-			Timestamp: aws.Int64(now().UnixNano() / 1000000),
-		})
-
-		n += len(b)
-	}
-
-	return n, nil
+	return len(b), nil
 }
 
 // eventsBuffer represents a buffer of cloudwatch events that are protected by a
