@@ -1,8 +1,6 @@
 package cloudwatch
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"sync"
