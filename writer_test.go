@@ -26,8 +26,7 @@ func TestWriter(t *testing.T) {
 
 	c.On("PutLogEvents", &cloudwatchlogs.PutLogEventsInput{
 		LogEvents: []*cloudwatchlogs.InputLogEvent{
-			{Message: aws.String("Hello\n"), Timestamp: aws.Int64(1000)},
-			{Message: aws.String("World"), Timestamp: aws.Int64(1000)},
+			{Message: aws.String("Hello\nWorld"), Timestamp: aws.Int64(1000)},
 		},
 		LogGroupName:  aws.String("group"),
 		LogStreamName: aws.String("1234"),
@@ -53,14 +52,13 @@ func TestWriter_Rejected(t *testing.T) {
 
 	c.On("PutLogEvents", &cloudwatchlogs.PutLogEventsInput{
 		LogEvents: []*cloudwatchlogs.InputLogEvent{
-			{Message: aws.String("Hello\n"), Timestamp: aws.Int64(1000)},
-			{Message: aws.String("World"), Timestamp: aws.Int64(1000)},
+			{Message: aws.String("Hello\nWorld"), Timestamp: aws.Int64(1000)},
 		},
 		LogGroupName:  aws.String("group"),
 		LogStreamName: aws.String("1234"),
 	}).Return(&cloudwatchlogs.PutLogEventsOutput{
 		RejectedLogEventsInfo: &cloudwatchlogs.RejectedLogEventsInfo{
-			TooOldLogEventEndIndex: aws.Int64(2),
+			TooOldLogEventEndIndex: aws.Int64(1),
 		},
 	}, nil)
 
@@ -113,8 +111,7 @@ func TestWriter_Close(t *testing.T) {
 
 	c.On("PutLogEvents", &cloudwatchlogs.PutLogEventsInput{
 		LogEvents: []*cloudwatchlogs.InputLogEvent{
-			{Message: aws.String("Hello\n"), Timestamp: aws.Int64(1000)},
-			{Message: aws.String("World"), Timestamp: aws.Int64(1000)},
+			{Message: aws.String("Hello\nWorld"), Timestamp: aws.Int64(1000)},
 		},
 		LogGroupName:  aws.String("group"),
 		LogStreamName: aws.String("1234"),
